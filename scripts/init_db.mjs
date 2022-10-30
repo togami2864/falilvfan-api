@@ -17,7 +17,8 @@ const DB_PASSWORD = "password";
 const DB_NAME = "falilvfan";
 const DB_PORT = 5432;
 
-await $`docker run \
+if (!$.env["SKIP_DOCKER"]) {
+  await $`docker run \
 -e POSTGRES_USER=${DB_USER} \
 -e POSTGRES_PASSWORD=${DB_PASSWORD} \
 -e POSTGRES_DB=${DB_NAME} \
@@ -25,6 +26,7 @@ await $`docker run \
 -d postgres \
 postgres -N 1000
 `;
+}
 
 let isRunning = false;
 while (isRunning) {
@@ -41,3 +43,6 @@ console.log(`Postgres is up and running on port ${DB_PORT}`);
 
 const DATABASE_URL = `postgres://${DB_USER}:${DB_PASSWORD}@localhost:${DB_PORT}/${DB_NAME}`;
 await $`sqlx database create --database-url ${DATABASE_URL}`;
+await $`sqlx migrate run --database-url ${DATABASE_URL}`;
+
+console.log("Postgres has been migrated, ready to go!");
