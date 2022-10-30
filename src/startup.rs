@@ -2,7 +2,7 @@ use std::net::TcpListener;
 
 use actix_web::{dev::Server, App, HttpServer};
 
-use crate::routes::{get_album, get_all_albums, health_check};
+use crate::routes::{get_album, get_all_albums, health_check, register_album};
 
 pub fn run(listener: TcpListener) -> Result<Server, std::io::Error> {
     let server = HttpServer::new(|| {
@@ -10,6 +10,7 @@ pub fn run(listener: TcpListener) -> Result<Server, std::io::Error> {
             .service(health_check)
             .service(get_all_albums)
             .service(get_album)
+            .service(register_album)
     })
     .listen(listener)?
     .run();
