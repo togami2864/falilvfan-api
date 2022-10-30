@@ -17,7 +17,32 @@ async fn health_check_works() {
         .send()
         .await
         .expect("Failed to execute request.");
-
     assert!(response.status().is_success());
     assert_eq!(Some(0), response.content_length());
+}
+
+#[tokio::test]
+async fn return_200_for_get_all_albums() {
+    let app = spawn_app();
+    let client = reqwest::Client::new();
+    let response = client
+        .get(format!("{}/albums", &app))
+        .send()
+        .await
+        .expect("Failed to execute request.");
+
+    assert_eq!(200, response.status().as_u16());
+}
+
+#[tokio::test]
+async fn return_200_for_get_album() {
+    let app = spawn_app();
+    let client = reqwest::Client::new();
+    let response = client
+        .get(format!("{}/album", &app))
+        .query(&[("album_id", "aaaa")])
+        .send()
+        .await
+        .expect("Failed to execute request.");
+    assert_eq!(200, response.status().as_u16());
 }
