@@ -1,16 +1,19 @@
 use std::net::TcpListener;
 
-use actix_web::{dev::Server, App, HttpServer};
-
 use crate::routes::{get_album, get_all_albums, health_check, register_album};
+use actix_web::web;
+use actix_web::{dev::Server, App, HttpServer};
+use sqlx::PgPool;
 
-pub fn run(listener: TcpListener) -> Result<Server, std::io::Error> {
-    let server = HttpServer::new(|| {
+pub fn run(listener: TcpListener, db_pool: PgPool) -> Result<Server, std::io::Error> {
+    let db_pool = web::Data::new(db_pool);
+    let server = HttpServer::new(move || {
         App::new()
             .service(health_check)
             .service(get_all_albums)
             .service(get_album)
             .service(register_album)
+            .app_data(db_pool.clone())
     })
     .listen(listener)?
     .run();
