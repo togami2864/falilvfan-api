@@ -11,7 +11,7 @@ pub struct AlbumData {
 }
 
 #[post("/register/album")]
-async fn register_album(req: web::Form<AlbumData>, pool: web::Data<PgPool>) -> HttpResponse {
+async fn register_album(req: web::Json<AlbumData>, pool: web::Data<PgPool>) -> HttpResponse {
     let release_date =
         sqlx::types::chrono::NaiveDate::parse_from_str(&req.release_date, "%Y/%m/%d").unwrap();
 

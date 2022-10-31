@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  postgres:
+    container_name: "falilvfan-dev"
+    image: postgres:14
+    environment:
+      - POSTGRES_USER=dev
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=falilvfan-dev
+    ports:
+      - "5433:5432"
+    volumes:
+      - falilvfan-dev-data:/var/lib/postgresql/data
+
+volumes:
+  falilvfan-dev-data:
+    driver: local

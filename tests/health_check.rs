@@ -3,6 +3,7 @@ use falilvfan::{
     configuration::{get_configuration, DatabaseSettings},
     startup::run,
 };
+use reqwest::header::CONTENT_TYPE;
 use sqlx::{Connection, Executor, PgConnection, PgPool};
 use std::net::TcpListener;
 use uuid::Uuid;
@@ -17,7 +18,7 @@ async fn spawn_app() -> TestApp {
     let port = listener.local_addr().unwrap().port();
     let address = format!("http://127.0.0.1:{}", port);
 
-    let mut configuration = get_configuration().expect("Failed to read configuration.");
+    let mut configuration = get_configuration(false).expect("Failed to read configuration.");
     configuration.database.database_name = Uuid::new_v4().to_string();
     let connection_pool = configure_database(&configuration.database).await;
 
@@ -94,10 +95,18 @@ async fn return_200_for_register_new_album() {
     let app = spawn_app().await;
 
     let client = reqwest::Client::new();
-    let body = "album_name=Cocoon%20for%20the%20Golden%20Future&spotify_id=05eS7MkETxSTk4UcyieA4s&is_single=false&release_date=2022/10/26";
+    let body = format!(
+        r#"{{
+"album_name": "{}",
+"spotify_id": "{}",
+"release_date": "{}",
+"is_single": false
+    }}"#,
+        "Cocoon for the Golden Future", "05eS7MkETxSTk4UcyieA4s", "2022/10/26"
+    );
     let response = client
         .post(format!("{}/register/album", &app.address))
-        .header("Content-Type", "application/x-www-form-urlencoded")
+        .header(CONTENT_TYPE, "application/json")
         .body(body)
         .send()
         .await
