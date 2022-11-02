@@ -241,3 +241,55 @@ async fn return_200_for_register_new_track() {
         "https://www.youtube.com/watch?v=aniw0eO_PlY&ab_channel=Fear%2CandLoathinginLasVegas"
     );
 }
+
+#[tokio::test]
+async fn return_200_for_register_new_live() {
+    let app = spawn_app().await;
+
+    sqlx::query!(
+        r#"INSERT INTO prefectures (id, prefecture)
+    VALUES ($1, $2)
+    "#,
+        14,
+        "神奈川県"
+    )
+    .execute(&app.db_pool)
+    .await
+    .unwrap();
+
+    let client = reqwest::Client::new();
+    let body = format!(
+        r#"{{"location": "KT Zepp Yokohama", "prefecture_id": {}}}"#,
+        14
+    );
+
+    let response = client
+        .post(format!("{}/register/locations", &app.address))
+        .header(CONTENT_TYPE, "application/json")
+        .body(body)
+        .send()
+        .await
+        .expect("Failed to execute request.");
+
+    assert_eq!(200, response.status().as_u16());
+
+    let saved = sqlx::query!("SELECT id FROM locations")
+        .fetch_one(&app.db_pool)
+        .await
+        .expect("Failed to fetch saved albums");
+
+    let body = format!(
+        r#"{{"location_id": "{}", "date": "2022/09/30", "is_festival": true}}"#,
+        saved.id
+    );
+
+    let response = client
+        .post(format!("{}/register/lives", &app.address))
+        .header(CONTENT_TYPE, "application/json")
+        .body(body)
+        .send()
+        .await
+        .expect("Failed to execute request.");
+
+    assert_eq!(200, response.status().as_u16());
+}

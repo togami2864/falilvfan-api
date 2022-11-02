@@ -1,7 +1,8 @@
 use std::net::TcpListener;
 
 use crate::routes::{
-    get_album, get_all_albums, health_check, register_album, register_locations, register_tracks,
+    get_album, get_all_albums, health_check, register_album, register_lives, register_locations,
+    register_tracks,
 };
 use actix_web::web;
 use actix_web::{dev::Server, App, HttpServer};
@@ -17,6 +18,7 @@ pub fn run(listener: TcpListener, db_pool: PgPool) -> Result<Server, std::io::Er
             .service(register_album)
             .service(register_locations)
             .service(register_tracks)
+            .service(register_lives)
             .app_data(db_pool.clone())
     })
     .listen(listener)?
