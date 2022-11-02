@@ -3,7 +3,7 @@ use falilvfan::{
     configuration::{get_configuration, DatabaseSettings},
     startup::run,
 };
-use reqwest::header::CONTENT_TYPE;
+use reqwest::{header::CONTENT_TYPE, Client};
 use sqlx::{Connection, Executor, PgConnection, PgPool};
 use std::net::TcpListener;
 use uuid::Uuid;
@@ -47,6 +47,27 @@ pub async fn configure_database(config: &DatabaseSettings) -> PgPool {
         .await
         .expect("Failed to migrate te database");
     connection_pool
+}
+
+async fn insert_sample_album(client: &Client, address: &str) {
+    let body = format!(
+        r#"{{
+"album_name": "{}",
+"spotify_id": "{}",
+"release_date": "{}",
+"is_single": false
+    }}"#,
+        "Cocoon for the Golden Future", "05eS7MkETxSTk4UcyieA4s", "2022/10/26"
+    );
+    let response = client
+        .post(format!("{}/register/album", address))
+        .header(CONTENT_TYPE, "application/json")
+        .body(body)
+        .send()
+        .await
+        .expect("Failed to execute request.");
+
+    assert_eq!(200, response.status().as_u16());
 }
 
 #[tokio::test]
@@ -167,4 +188,56 @@ async fn return_200_for_register_new_location() {
 
     assert_eq!(saved.location, "KT Zepp Yokohama");
     assert_eq!(saved.prefecture_id, 14);
+}
+
+#[tokio::test]
+async fn return_200_for_register_new_track() {
+    let app = spawn_app().await;
+
+    let client = reqwest::Client::new();
+    insert_sample_album(&client, &app.address).await;
+
+    let saved = sqlx::query!("SELECT album_id FROM albums")
+        .fetch_one(&app.db_pool)
+        .await
+        .expect("Failed to fetch saved albums");
+
+    let body = format!(
+        r#"{{
+"name": "{}",
+"track_number": {},
+"duration_ms": {},
+"album_id": "{}",
+"youtube_url": "{}"
+    }}"#,
+        "Get Back the Hope",
+        1,
+        188000,
+        saved.album_id,
+        "https://www.youtube.com/watch?v=aniw0eO_PlY&ab_channel=Fear%2CandLoathinginLasVegas"
+    );
+
+    let response = client
+        .post(format!("{}/register/tracks", &app.address))
+        .header(CONTENT_TYPE, "application/json")
+        .body(body)
+        .send()
+        .await
+        .expect("Failed to execute request.");
+
+    assert_eq!(200, response.status().as_u16());
+
+    let saved = sqlx::query!("SELECT name, track_number, duration_ms, youtube_url FROM tracks")
+        .fetch_one(&app.db_pool)
+        .await
+        .expect("Failed to fetch saved albums");
+
+    assert_eq!(saved.name, "Get Back the Hope");
+    assert_eq!(saved.track_number, 1);
+    // modify millisecond
+    assert_eq!(saved.duration_ms.microseconds / 1000, 188000);
+    assert_eq!(
+        saved.youtube_url,
+        "https://www.youtube.com/watch?v=aniw0eO_PlY&ab_channel=Fear%2CandLoathinginLasVegas"
+    );
 }
