@@ -96,8 +96,7 @@ pub async fn insert_sample_locations(app: &TestApp) -> Uuid {
     location_id
 }
 
-pub async fn insert_sample_tracks(app: &TestApp) -> Uuid {
-    let album_id = insert_sample_album(app).await;
+pub async fn insert_sample_tracks(app: &TestApp, album_id: &Uuid) -> Uuid {
     let track_id = Uuid::new_v4();
     let dur = std::time::Duration::from_millis(188000);
     let dur = PgInterval::try_from(dur).unwrap();

@@ -136,7 +136,8 @@ async fn return_200_for_register_new_live() {
     let app = spawn_app().await;
 
     let location_id = insert_sample_locations(&app).await;
-    let track_id = insert_sample_tracks(&app).await;
+    let album_id = insert_sample_album(&app).await;
+    let track_id = insert_sample_tracks(&app, &album_id).await;
 
     let body = format!(
         r#"{{"location_id": "{}", "event_name":"FaLiLV Shuffle Tour 2022", "date": "2022/09/30", "is_festival": false, "setlist_data": [{{"track_id": "{}", "track_order": {}}}]
