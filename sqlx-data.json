@@ -1,5 +1,59 @@
 {
   "db": "PostgreSQL",
+  "031a51207e570ffeb81d0836b7ef726b21015ed2745285c7e2176aed01bfb78a": {
+    "describe": {
+      "columns": [
+        {
+          "name": "album_id",
+          "ordinal": 0,
+          "type_info": "Uuid"
+        },
+        {
+          "name": "album_name",
+          "ordinal": 1,
+          "type_info": "Text"
+        },
+        {
+          "name": "spotify_id",
+          "ordinal": 2,
+          "type_info": "Text"
+        },
+        {
+          "name": "is_single",
+          "ordinal": 3,
+          "type_info": "Bool"
+        },
+        {
+          "name": "release_date",
+          "ordinal": 4,
+          "type_info": "Date"
+        },
+        {
+          "name": "created_at",
+          "ordinal": 5,
+          "type_info": "Timestamptz"
+        },
+        {
+          "name": "updated_at",
+          "ordinal": 6,
+          "type_info": "Timestamptz"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "parameters": {
+        "Left": []
+      }
+    },
+    "query": "SELECT * FROM albums LIMIT 100"
+  },
   "38b966940a0e6cbfc01163a1bea8a646697a900cfba5476db311d68d053af575": {
     "describe": {
       "columns": [],
@@ -15,6 +69,94 @@
       }
     },
     "query": "INSERT INTO tracks (name, track_number, duration_ms, album_id, youtube_url)\n    VALUES ($1, $2, $3, $4, $5)\n    "
+  },
+  "44630801f5055c4e000336056a0f625233f98707d17b5339ec1e4916720fcd99": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Uuid"
+        },
+        {
+          "name": "album_id",
+          "ordinal": 1,
+          "type_info": "Uuid"
+        },
+        {
+          "name": "name",
+          "ordinal": 2,
+          "type_info": "Text"
+        },
+        {
+          "name": "duration_ms",
+          "ordinal": 3,
+          "type_info": "Interval"
+        },
+        {
+          "name": "youtube_url",
+          "ordinal": 4,
+          "type_info": "Text"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Uuid"
+        ]
+      }
+    },
+    "query": "SELECT id, album_id, name, duration_ms, youtube_url FROM tracks WHERE tracks.album_id = $1"
+  },
+  "544743f48796ac6f70f67361c51fde960d84176c97ccd486522851fe58010501": {
+    "describe": {
+      "columns": [
+        {
+          "name": "album_id",
+          "ordinal": 0,
+          "type_info": "Uuid"
+        },
+        {
+          "name": "album_name",
+          "ordinal": 1,
+          "type_info": "Text"
+        },
+        {
+          "name": "spotify_id",
+          "ordinal": 2,
+          "type_info": "Text"
+        },
+        {
+          "name": "release_date",
+          "ordinal": 3,
+          "type_info": "Date"
+        },
+        {
+          "name": "is_single",
+          "ordinal": 4,
+          "type_info": "Bool"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Uuid"
+        ]
+      }
+    },
+    "query": "SELECT album_id, album_name, spotify_id, release_date, is_single FROM albums WHERE albums.album_id = $1"
   },
   "606596272c008ae2d4ae13a6abc464a79cc3290f58e165b86abecc805adbc57f": {
     "describe": {
