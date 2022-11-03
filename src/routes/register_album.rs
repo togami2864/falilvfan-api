@@ -2,7 +2,7 @@ use actix_web::{post, web, HttpResponse};
 use sqlx::PgPool;
 use uuid::Uuid;
 
-#[derive(Debug, serde::Deserialize)]
+#[derive(Debug, serde::Serialize, serde::Deserialize)]
 pub struct AlbumData {
     album_name: String,
     spotify_id: String,

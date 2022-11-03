@@ -15,6 +15,7 @@ name = "falivfan"
 actix-web = "4"
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
 serde = "1.0.115"
+serde_json = "1.0.87"
 config = { version = "0.13", default-features = false, features = ["yaml"] }
 uuid = { version = "1", features = ["v4"] }
 

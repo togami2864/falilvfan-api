@@ -1,6 +1,7 @@
-mod test_helpers;
+use falilvfan::routes::AlbumDataRes;
 
-use crate::test_helpers::spawn_app;
+use crate::helpers::insert_sample_album;
+use crate::helpers::spawn_app;
 
 #[tokio::test]
 async fn health_check_works() {
@@ -19,6 +20,7 @@ async fn health_check_works() {
 #[tokio::test]
 async fn return_200_for_get_all_albums() {
     let app = spawn_app().await;
+    insert_sample_album(&app).await;
     let client = reqwest::Client::new();
 
     let response = client
@@ -28,6 +30,10 @@ async fn return_200_for_get_all_albums() {
         .expect("Failed to execute request.");
 
     assert_eq!(200, response.status().as_u16());
+    let json = response.json::<String>().await.unwrap();
+    if let Err(e) = serde_json::from_str::<Vec<AlbumDataRes>>(&json) {
+        panic!("{}", e);
+    }
 }
 
 #[tokio::test]
