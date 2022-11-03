@@ -214,7 +214,7 @@ async fn return_200_for_register_new_live() {
     let track_id = insert_sample_tracks(&app).await;
 
     let body = format!(
-        r#"{{"location_id": "{}", "date": "2022/09/30", "is_festival": true, "setlist_data": [{{"track_id": "{}", "track_order": {}}}]
+        r#"{{"location_id": "{}", "event_name":"FaLiLV Shuffle Tour 2022", "date": "2022/09/30", "is_festival": false, "setlist_data": [{{"track_id": "{}", "track_order": {}}}]
     }}"#,
         location_id, track_id, 1
     );
@@ -229,4 +229,13 @@ async fn return_200_for_register_new_live() {
         .expect("Failed to execute request.");
 
     assert_eq!(200, response.status().as_u16());
+
+    let saved = sqlx::query!("SELECT event_name, date, is_festival FROM lives")
+        .fetch_one(&app.db_pool)
+        .await
+        .expect("Failed to fetch saved albums");
+
+    assert_eq!(saved.event_name, "FaLiLV Shuffle Tour 2022");
+    assert_eq!(saved.date.to_string(), "2022-09-30");
+    assert_eq!(saved.is_festival, false);
 }

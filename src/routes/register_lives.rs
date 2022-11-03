@@ -12,6 +12,7 @@ pub struct SetListData {
 
 #[derive(Debug, serde::Deserialize)]
 pub struct LivesData {
+    event_name: String,
     location_id: String,
     date: String,
     is_festival: bool,
@@ -25,10 +26,11 @@ async fn register_lives(req: web::Json<LivesData>, pool: web::Data<PgPool>) -> H
     let date = sqlx::types::chrono::NaiveDate::parse_from_str(&req.date, "%Y/%m/%d").unwrap();
 
     if let Err(e) = sqlx::query!(
-        r#"INSERT INTO lives (live_id, location_id, date, is_festival)
-    VALUES ($1, $2, $3, $4)
+        r#"INSERT INTO lives (live_id, event_name, location_id, date, is_festival)
+    VALUES ($1, $2, $3, $4, $5)
     "#,
         live_id,
+        req.event_name,
         location_id,
         date,
         req.is_festival

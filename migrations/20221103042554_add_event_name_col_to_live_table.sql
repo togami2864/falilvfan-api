@@ -1,0 +1,1 @@
+ALTER TABLE lives ADD COLUMN event_name text NOT NULL;
