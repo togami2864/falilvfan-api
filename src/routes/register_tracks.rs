@@ -5,6 +5,7 @@ use sqlx::{postgres::types::PgInterval, PgPool};
 use uuid::Uuid;
 
 #[derive(Debug, serde::Deserialize)]
+#[serde(rename_all(serialize = "snake_case", deserialize = "camelCase"))]
 pub struct TrackData {
     name: String,
     track_number: i32,

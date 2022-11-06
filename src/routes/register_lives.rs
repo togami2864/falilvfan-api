@@ -5,12 +5,15 @@ use sqlx::PgPool;
 use uuid::Uuid;
 
 #[derive(Debug, serde::Deserialize)]
+#[serde(rename_all(serialize = "snake_case", deserialize = "camelCase"))]
 pub struct SetListData {
     track_id: String,
     track_order: i32,
+    track_name: String,
 }
 
 #[derive(Debug, serde::Deserialize)]
+#[serde(rename_all(serialize = "snake_case", deserialize = "camelCase"))]
 pub struct LivesData {
     event_name: String,
     location_id: String,
