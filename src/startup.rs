@@ -1,8 +1,8 @@
 use std::net::TcpListener;
 
 use crate::routes::{
-    fetch_album, fetch_all_albums, fetch_all_locations, fetch_all_tracks, health_check,
-    register_album, register_lives, register_locations, register_tracks,
+    fetch_album, fetch_all_albums, fetch_all_lives, fetch_all_locations, fetch_all_tracks,
+    health_check, register_album, register_lives, register_locations, register_tracks,
 };
 use actix_cors::Cors;
 use actix_web::http::header;
@@ -25,6 +25,7 @@ pub fn run(listener: TcpListener, db_pool: PgPool) -> Result<Server, std::io::Er
             .service(fetch_album)
             .service(fetch_all_locations)
             .service(fetch_all_tracks)
+            .service(fetch_all_lives)
             .service(register_album)
             .service(register_locations)
             .service(register_tracks)

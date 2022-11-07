@@ -2,7 +2,7 @@ use actix_web::{get, web, HttpResponse};
 use sqlx::PgPool;
 
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
-#[serde(rename_all(serialize = "snake_case", deserialize = "camelCase"))]
+#[serde(rename_all(serialize = "camelCase", deserialize = "snake_case"))]
 struct TrackData {
     track_id: String,
     track_name: String,
