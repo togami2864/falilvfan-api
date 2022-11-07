@@ -6,6 +6,7 @@ use sqlx::PgPool;
 use uuid::Uuid;
 
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
+#[serde(rename_all(serialize = "camelCase", deserialize = "snake_case"))]
 struct AlbumData {
     album_id: String,
     album_name: String,
@@ -38,7 +39,7 @@ async fn fetch_all_albums(pool: web::Data<PgPool>) -> HttpResponse {
         })
         .collect::<Vec<_>>();
 
-    let album_data_json = serde_json::to_string::<Vec<AlbumData>>(&album_data_records).unwrap();
+    let album_data_json = serde_json::to_value::<Vec<AlbumData>>(album_data_records).unwrap();
     HttpResponse::Ok()
         .content_type("application/json")
         .json(album_data_json)
