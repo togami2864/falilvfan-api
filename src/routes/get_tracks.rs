@@ -1,10 +1,8 @@
-use std::collections::HashMap;
-
 use actix_web::{get, web, HttpResponse};
 use sqlx::PgPool;
 
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all(serialize = "snake_case", deserialize = "camelCase"))]
 struct TrackData {
     track_id: String,
     track_name: String,
@@ -43,29 +41,4 @@ async fn get_all_tracks(pool: web::Data<PgPool>) -> HttpResponse {
     HttpResponse::Ok()
         .content_type("application/json")
         .json(track_data_json)
-}
-
-#[get("/admin/tracks/map")]
-async fn get_track_id_map(pool: web::Data<PgPool>) -> HttpResponse {
-    let entities = match sqlx::query!(r#"SELECT id, name FROM tracks"#)
-        .fetch_all(pool.get_ref())
-        .await
-    {
-        Ok(fetch_result) => fetch_result,
-        Err(e) => {
-            println!("Failed to execute query: {}", e);
-            return HttpResponse::InternalServerError().finish();
-        }
-    };
-
-    let mut json_builder: HashMap<String, String> = HashMap::new();
-
-    for record in entities.into_iter() {
-        json_builder.insert(record.name, record.id.to_string());
-    }
-
-    let track_id_map = serde_json::to_value(json_builder).unwrap();
-    HttpResponse::Ok()
-        .content_type("application/json")
-        .json(track_id_map)
 }

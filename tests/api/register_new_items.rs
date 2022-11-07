@@ -94,10 +94,10 @@ async fn return_200_for_register_new_track() {
     let body = format!(
         r#"{{
 "name": "{}",
-"track_number": {},
-"duration_ms": {},
-"album_id": "{}",
-"youtube_url": "{}"
+"trackNumber": {},
+"durationMs": {},
+"albumId": "{}",
+"youtubeUrl": "{}"
     }}"#,
         "Get Back the Hope",
         1,
@@ -140,9 +140,9 @@ async fn return_200_for_register_new_live() {
     let track_id = insert_sample_tracks(&app, &album_id).await;
 
     let body = format!(
-        r#"{{"location_id": "{}", "event_name":"FaLiLV Shuffle Tour 2022", "date": "2022/09/30", "is_festival": false, "setlist_data": [{{"track_id": "{}", "track_order": {}}}]
+        r#"{{"locationId": "{}", "eventName":"FaLiLV Shuffle Tour 2022", "date": "2022/09/30", "isFestival": false, "setlistData": [{{"trackId": "{}", "trackOrder": {}, "trackName": "{}"}}]
     }}"#,
-        location_id, track_id, 1
+        location_id, track_id, 1, "Get Back the Hope"
     );
 
     let client = reqwest::Client::new();
@@ -153,7 +153,6 @@ async fn return_200_for_register_new_live() {
         .send()
         .await
         .expect("Failed to execute request.");
-
     assert_eq!(200, response.status().as_u16());
 
     let saved = sqlx::query!("SELECT event_name, date, is_festival FROM lives")

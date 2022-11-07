@@ -2,6 +2,7 @@ use actix_web::{get, web, HttpResponse};
 use sqlx::PgPool;
 
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
+#[serde(rename_all(serialize = "snake_case", deserialize = "camelCase"))]
 struct LocationData {
     location_id: String,
     location: String,
