@@ -4,7 +4,7 @@ use crate::helpers::insert_sample_locations;
 use crate::helpers::spawn_app;
 
 #[tokio::test]
-async fn return_200_for_get_all_locations() {
+async fn success_fetch_all_locations() {
     let app = spawn_app().await;
     let _ = insert_sample_locations(&app).await;
 

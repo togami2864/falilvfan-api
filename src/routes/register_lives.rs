@@ -22,7 +22,7 @@ pub struct LivesData {
     setlist_data: Vec<SetListData>,
 }
 
-#[post("/register/lives")]
+#[post("/admin/live/register")]
 async fn register_lives(req: web::Json<LivesData>, pool: web::Data<PgPool>) -> HttpResponse {
     let live_id = Uuid::new_v4();
     let location_id = Uuid::from_str(&req.location_id).unwrap();

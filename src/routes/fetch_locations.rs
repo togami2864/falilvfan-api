@@ -10,7 +10,7 @@ struct LocationData {
 }
 
 #[get("/locations")]
-async fn get_all_locations(pool: web::Data<PgPool>) -> HttpResponse {
+async fn fetch_all_locations(pool: web::Data<PgPool>) -> HttpResponse {
     let entities =
         match sqlx::query!(r#"SELECT id, location, prefecture_id FROM locations LIMIT 100"#)
             .fetch_all(pool.get_ref())

@@ -8,7 +8,7 @@ pub struct LocationData {
     prefecture_id: i32,
 }
 
-#[post("/register/locations")]
+#[post("/admin/location/register")]
 async fn register_locations(req: web::Json<LocationData>, pool: web::Data<PgPool>) -> HttpResponse {
     match sqlx::query!(
         r#"INSERT INTO locations (id, location, prefecture_id)

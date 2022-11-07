@@ -13,7 +13,7 @@ pub struct TrackData {
 }
 
 #[tokio::test]
-async fn return_200_for_get_all_tracks() {
+async fn success_fetch_all_tracks() {
     let app = spawn_app().await;
     let album_id = insert_sample_album(&app).await;
     let _track_id = insert_sample_tracks(&app, &album_id).await;

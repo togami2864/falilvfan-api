@@ -14,7 +14,7 @@ pub struct TrackData {
     youtube_url: String,
 }
 
-#[post("/register/tracks")]
+#[post("/admin/track/register")]
 async fn register_tracks(req: web::Json<TrackData>, pool: web::Data<PgPool>) -> HttpResponse {
     let dur = std::time::Duration::from_millis(req.duration_ms as u64);
     let dur = PgInterval::try_from(dur).unwrap();

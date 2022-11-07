@@ -15,7 +15,7 @@ struct AlbumData {
 }
 
 #[get("/albums")]
-async fn get_all_albums(pool: web::Data<PgPool>) -> HttpResponse {
+async fn fetch_all_albums(pool: web::Data<PgPool>) -> HttpResponse {
     let entities = match sqlx::query!(r#"SELECT * FROM albums LIMIT 100"#)
         .fetch_all(pool.get_ref())
         .await
@@ -74,7 +74,7 @@ pub struct QueryParams {
 }
 
 #[get("/album")]
-async fn get_album(params: web::Query<QueryParams>, pool: web::Data<PgPool>) -> HttpResponse {
+async fn fetch_album(params: web::Query<QueryParams>, pool: web::Data<PgPool>) -> HttpResponse {
     let album_id = Uuid::from_str(&params.album_id).unwrap();
 
     let album_meta = match sqlx::query!("SELECT album_id, album_name, spotify_id, release_date, is_single FROM albums WHERE albums.album_id = $1", album_id)
@@ -119,12 +119,12 @@ async fn get_album(params: web::Query<QueryParams>, pool: web::Data<PgPool>) -> 
         .collect::<Vec<_>>();
     let tracks_json = serde_json::to_value::<Vec<TrackData>>(all_tracks_in_album).unwrap();
 
-    let get_album_response = json!({
+    let fetch_album_response = json!({
         "tracks": tracks_json,
         "album": album_meta_json
     });
 
     HttpResponse::Ok()
         .content_type("application/json")
-        .json(get_album_response)
+        .json(fetch_album_response)
 }

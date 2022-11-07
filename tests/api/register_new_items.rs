@@ -20,7 +20,7 @@ async fn return_200_for_register_new_album() {
         "Cocoon for the Golden Future", "05eS7MkETxSTk4UcyieA4s", "2022/10/26"
     );
     let response = client
-        .post(format!("{}/register/album", &app.address))
+        .post(format!("{}/admin/album/register", &app.address))
         .header(CONTENT_TYPE, "application/json")
         .body(body)
         .send()
@@ -66,7 +66,7 @@ async fn return_200_for_register_new_location() {
     );
 
     let response = client
-        .post(format!("{}/register/locations", &app.address))
+        .post(format!("{}/admin/location/register", &app.address))
         .header(CONTENT_TYPE, "application/json")
         .body(body)
         .send()
@@ -107,7 +107,7 @@ async fn return_200_for_register_new_track() {
     );
 
     let response = client
-        .post(format!("{}/register/tracks", &app.address))
+        .post(format!("{}/admin/track/register", &app.address))
         .header(CONTENT_TYPE, "application/json")
         .body(body)
         .send()
@@ -147,7 +147,7 @@ async fn return_200_for_register_new_live() {
 
     let client = reqwest::Client::new();
     let response = client
-        .post(format!("{}/register/lives", &app.address))
+        .post(format!("{}/admin/live/register", &app.address))
         .header(CONTENT_TYPE, "application/json")
         .body(body)
         .send()

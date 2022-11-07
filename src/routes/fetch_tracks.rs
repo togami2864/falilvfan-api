@@ -12,7 +12,7 @@ struct TrackData {
 }
 
 #[get("/tracks")]
-async fn get_all_tracks(pool: web::Data<PgPool>) -> HttpResponse {
+async fn fetch_all_tracks(pool: web::Data<PgPool>) -> HttpResponse {
     let entities = match sqlx::query!(
         r#"SELECT id, name, track_number, youtube_url, album_id FROM tracks LIMIT 100"#
     )

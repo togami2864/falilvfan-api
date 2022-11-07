@@ -10,7 +10,7 @@ pub struct AlbumData {
     is_single: bool,
 }
 
-#[post("/register/album")]
+#[post("/admin/album/register")]
 async fn register_album(req: web::Json<AlbumData>, pool: web::Data<PgPool>) -> HttpResponse {
     let release_date =
         sqlx::types::chrono::NaiveDate::parse_from_str(&req.release_date, "%Y/%m/%d").unwrap();
