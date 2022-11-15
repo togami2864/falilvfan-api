@@ -1,23 +1,9 @@
-name: cargo lint
+name: build
 
 on: [push, pull_request]
 
 jobs:
-  fmt:
-    name: fmt
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          override: true
-          components: rustfmt
-      - name: Run cargo fmt
-        run: cargo fmt --all -- --check
-
-  clippy:
-    name: clippy
+  build:
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -37,7 +23,6 @@ jobs:
         with:
           toolchain: stable
           override: true
-          components: clippy
       - name: Cache sqlx-cli
         uses: actions/cache@v2
         id: cache-sqlx
@@ -62,5 +47,13 @@ jobs:
         run: |
           sudo apt-get install libpq-dev -y
           SKIP_DOCKER=true npx zx ./scripts/init_db.mjs
-      - name: Run cargo clippy
-        run: cargo clippy -- -D warnings
+      - name: install cargo-tarpaulin
+        run: cargo install cargo-tarpaulin
+      - name: clean
+        run: cargo clean
+      - name: test
+        run: cargo test
+        env:
+          RUST_BACKTRACE: 1
+      - name: coverage
+        run: cargo tarpaulin --ignore-tests
